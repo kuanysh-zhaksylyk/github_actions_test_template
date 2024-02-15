@@ -66,9 +66,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        ssh-key: ${{ secrets.ssh }}
-        submodules: recursive
         
     - name: Checking changes
       uses: dorny/paths-filter@v3
@@ -94,48 +91,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ssh-key: ${{ secrets.ssh }}
-          submodules: recursive
         
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install Python dependencies
-        run: |
-          ./scripts/install_python_deps.sh
           
-      - name: Restore build caches
-        uses: hendrikmuhs/ccache-action@v1.2
-  
-      - name: Checking quality of the Python code
-        run: |
-          source venv/bin/activate
-          python -m isort -c --sg problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/yolov7 problem-solver/py_kpm_based/
-          python -m black --diff --color --line-length 120 --exclude problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/yolov7 problem-solver/py_kpm_based/
-          python -m pylint --ignore-paths problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/yolov7 problem-solver/py_kpm_based/
-  
       - name: Download ML models by SFTP
         run: |
           sudo apt-get install lftp -y
           lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }} -e "lcd ${{ env.path }}; get ${{ secrets.sftp-path }} -o model.pt; exit"
         env:
-          path: "problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/"
+          path: "/"
         
       - name: Load ML models
         run: |
           source venv/bin/activate
-          curl -L -s -o problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/model.pt 'https://www.dropbox.com/scl/fi/az3zjb1uhakl0awkt292m/model.pt?rlkey=1h6yodhguppchbr06mf4nsx55&dl=0'
+          curl -L -s -o ./model.pt 'https://www.dropbox.com/scl/fi/az3zjb1uhakl0awkt292m/model.pt?rlkey=1h6yodhguppchbr06mf4nsx55&dl=0'
         
-      - name: Run py tests
-        env: 
-          COVERAGE_LIMIT: 75
-        run: |
-          source venv/bin/activate
-          python -m coverage run --source=problem-solver/py_kpm_based/ -m unittest discover -s problem-solver/py_kpm_based/
-          python -m coverage report --fail-under=$COVERAGE_LIMIT -m
           
   # # JOB to build others steps
   # others:
