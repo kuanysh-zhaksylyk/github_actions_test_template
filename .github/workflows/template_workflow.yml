@@ -72,6 +72,7 @@ jobs:
       - name: Download ML models by SFTP
         run: |
           sudo apt-get install lftp -y
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.sftp-host }} >> ~/.ssh/known_hosts
           lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }} -e  "lcd ${{ env.path }} ; get ${{ secrets.sftp-path }} -o model.pt; exit"
           ls -l folder/test
