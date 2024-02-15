@@ -1,0 +1,194 @@
+name: template_workflow
+
+on:
+  # It's callable template
+  workflow_call:
+    secrets:
+      ssh:
+        required: true
+      access-token: 
+        required: true
+      sftp-user:
+        required: true
+      sftp-pass:
+        required: true
+      sftp-host:
+        required: true
+      sftp-path:
+        required: true
+    outputs:
+      others-var:
+        description: "Other steps"
+        value: ${{ jobs.others.outputs.output2 }}
+
+jobs:
+  check_pr_commits:
+    name: Check commit messages
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - name: GS Commit Message Checker
+        # You may pin to the exact commit or the version.
+        # uses: GsActions/commit-message-checker@9d8708beab99f811c5fe3a4f98acc4b2f2ba8496
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        uses: GsActions/commit-message-checker@v1
+        with:
+          # A regex pattern to check if a commit message is valid.
+          pattern: "((feat|fix|docs|style|refactor|test|build|ci|perf)+(\\([a-z]+(.)+\\))?\\: [a-z]+(.)+)|(Review fixes(.)*)|(Merge pull request(.)*)"
+          # Expression flags change how the expression is interpreted.
+          flags: # optional, default is gm
+          # A error message which will be returned in case of an error.
+          error: "One of commit messages has an incorrect title. Please read the documentation: docs/dev/pr.md"
+          # Setting this input to true will exclude the Pull Request title from the check.
+          excludeTitle: true # optional, default is false
+          # Setting this input to true will exclude the Pull Request description from the check.
+          excludeDescription: true # optional, default is false
+          # Setting this input to true will check all Pull Request commits
+          checkAllCommitMessages: true # optional, default is false
+          # you must provide GITHUB_TOKEN to this input if checkAllCommitMessages is true
+          accessToken: ${{ secrets.access-token }} # optional, default is false
+
+  check-changes:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    env:
+      TERM: linux
+    # Set job outputs to values from filter step
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+      others: ${{ steps.filter.outputs.others }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ssh-key: ${{ secrets.ssh }}
+        submodules: recursive
+        
+    - name: Checking changes
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          python:
+            - '**/*'
+          # others:
+          #   - '!problem-solver/py_kpm_based/**'
+
+  # JOB to build only python dependecies and tests
+  python:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.python == 'true' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    env:
+      TERM: linux
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.ssh }}
+          submodules: recursive
+        
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies
+        run: |
+          ./scripts/install_python_deps.sh
+          
+      - name: Restore build caches
+        uses: hendrikmuhs/ccache-action@v1.2
+  
+      - name: Checking quality of the Python code
+        run: |
+          source venv/bin/activate
+          python -m isort -c --sg problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/yolov7 problem-solver/py_kpm_based/
+          python -m black --diff --color --line-length 120 --exclude problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/yolov7 problem-solver/py_kpm_based/
+          python -m pylint --ignore-paths problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/yolov7 problem-solver/py_kpm_based/
+  
+      - name: Download ML models by SFTP
+        run: |
+          sudo apt-get install lftp -y
+          lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }} -e "lcd ${{ env.path }}; get ${{ secrets.sftp-path }} -o model.pt; exit"
+        env:
+          path: "problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/"
+        
+      - name: Load ML models
+        run: |
+          source venv/bin/activate
+          curl -L -s -o problem-solver/py_kpm_based/modules/medicine_name_recognition_module/medicine_name_detector/model.pt 'https://www.dropbox.com/scl/fi/az3zjb1uhakl0awkt292m/model.pt?rlkey=1h6yodhguppchbr06mf4nsx55&dl=0'
+        
+      - name: Run py tests
+        env: 
+          COVERAGE_LIMIT: 75
+        run: |
+          source venv/bin/activate
+          python -m coverage run --source=problem-solver/py_kpm_based/ -m unittest discover -s problem-solver/py_kpm_based/
+          python -m coverage report --fail-under=$COVERAGE_LIMIT -m
+          
+  # # JOB to build others steps
+  # others:
+  #   needs: check-changes
+  #   if: ${{ needs.check-changes.outputs.others == 'true' }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       os: [ubuntu-20.04, ubuntu-22.04]
+  #   env:
+  #     TERM: linux
+  #   outputs:  
+  #     output2: ${{ steps.others-step.outputs.others-var }}
+    
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ssh-key: ${{ secrets.ssh }}
+  #         submodules: recursive
+
+  #     - name: Update
+  #       run: |
+  #         sudo apt-get update
+
+  #     - name: Install submodules
+  #       run: |
+  #         ./scripts/install_submodules.sh
+
+  #     - name: Install problem-solver dependencies
+  #       run: |
+  #         ./scripts/install_problem_solver_deps.sh --dev
+
+  #     - name: Checking the code with clang
+  #       run: |
+  #         ./scripts/clang/check-formatting.sh
+
+  #     - name: Build problem solver
+  #       run: | 
+  #         ./scripts/build_problem_solver.sh --tests --release
+
+  #     - name: Run cpp tests
+  #       run: |
+  #         ./scripts/run_cpp_tests.sh
+
+  #     - name: Create build-output artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #           name: build-output - ${{ matrix.os }}
+  #           path: .
+
+  #     - name: Verify variables to move further
+  #       id: others-step
+  #       run: | 
+  #         echo "others-var=true" >> $GITHUB_OUTPUT
