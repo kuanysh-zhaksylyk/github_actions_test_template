@@ -68,7 +68,7 @@ jobs:
         run: |
           sudo apt-get install lftp -y
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.sftp-host }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.sftp-finger }}" >> ~/.ssh/known_hosts
           lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }}:50 -e  "lcd ${{ env.path }} ; get ${{ secrets.sftp-path }} -o model.pt; exit"
           ls -l folder/test
         env:
