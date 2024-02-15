@@ -68,22 +68,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.sftp-host }}
-          username: ${{ secrets.sftp-user }}
-          password: ${{ secrets.sftp-pass }}
-          port: ${{ secrets.sftp-port }}
-          script: whoami
-          
       - name: Download ML models by SFTP
         run: |
           sudo apt-get install lftp -y
-          mkdir -p ~/.ssh
-          echo "${{ secrets.sftp-finger }}" >> ~/.ssh/known_hosts
-          lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }}:50 -e  "lcd ${{ env.path }} ; get ${{ secrets.sftp-path }} -o model.pt; exit"
+          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts  
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keyscan [iss-nas.synology.me] >> ~/.ssh/known_hosts
+          lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }} -e  "lcd ${{ env.path }} ; get ${{ secrets.sftp-path }} -o model.pt; exit"
           ls -l folder/test
         env:
           path: "folder/test"
