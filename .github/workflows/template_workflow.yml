@@ -14,6 +14,8 @@ on:
         required: true
       sftp-finger:
         required: true
+      sftp-port:
+        required: true
     outputs:
       others-var:
         description: "Other steps"
