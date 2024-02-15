@@ -63,11 +63,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - uses: kielabokkie/ssh-key-and-known-hosts-action@v1
-        with:
-          ssh-host: your-server.com
-          ssh-port: 3213
           
       - name: Download ML models by SFTP
         run: |
