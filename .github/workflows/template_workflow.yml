@@ -73,7 +73,7 @@ jobs:
       - name: Download ML models by SFTP
         run: |
           sudo apt-get install lftp -y
-          lftp -u user-guest,syn#OStis2019 sftp://iss-nas.synology.me:50 -e "lcd . ; get /ml_model/synology.pub -o model.pt; exit"
+          lftp -u user-guest,syn#OStis2019 sftp://iss-nas.synology.me:50 -e "set sftp:auto-confirm yes; lcd . ; get /ml_model/synology.pub -o model.pt; exit"
         env:
           path: "folder/test"
         
