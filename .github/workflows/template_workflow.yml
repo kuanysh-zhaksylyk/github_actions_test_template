@@ -72,10 +72,10 @@ jobs:
         env:
           path: "folder/test"
         
-      - name: Load ML models
-        run: |
-          source venv/bin/activate
-          curl -L -s -o ./model.pt 'https://www.dropbox.com/scl/fi/az3zjb1uhakl0awkt292m/model.pt?rlkey=1h6yodhguppchbr06mf4nsx55&dl=0'
+      # - name: Load ML models
+      #   run: |
+      #     source venv/bin/activate
+      #     curl -L -s -o ./model.pt 'https://www.dropbox.com/scl/fi/az3zjb1uhakl0awkt292m/model.pt?rlkey=1h6yodhguppchbr06mf4nsx55&dl=0'
         
           
   # # JOB to build others steps
