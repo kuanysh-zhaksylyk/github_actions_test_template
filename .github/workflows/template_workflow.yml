@@ -75,7 +75,10 @@ jobs:
           sudo apt-get install lftp -y
           mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts  
           chmod 600 ~/.ssh/known_hosts
-          echo ${{ secrets.sftp_ssh }} >> ~/.ssh/known_hosts
+          cd ~/.ssh
+          echo "${{ secrets.sftp_ssh }}" > id_rsa
+          chmod 0400 id_rsa
+          ssh-keyscan -t rsa  ${{ iss-nas.synology.me }} >> ~/.ssh/known_hosts
           lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }} -e  "lcd ${{ env.path }} ; get ${{ secrets.sftp-path }} -o model.pt; exit"
           ls -l folder/test
         env:
