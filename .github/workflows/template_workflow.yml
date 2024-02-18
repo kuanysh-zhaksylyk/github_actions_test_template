@@ -10,7 +10,7 @@ on:
         required: true
       sftp-host:
         required: true
-      sftp-path:
+      sftp-port:
         required: true
     outputs:
       others-var:

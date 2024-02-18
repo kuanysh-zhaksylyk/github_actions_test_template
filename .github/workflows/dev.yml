@@ -12,7 +12,7 @@ jobs:
       sftp-user: ${{ secrets.SFTP_USER }}
       sftp-pass: ${{ secrets.SFTP_PASS }}
       sftp-host: ${{ secrets.SFTP_HOST }}
-      sftp-path: ${{ secrets.SFTP_PATH }}
+      sftp-port: ${{ secrets.SFTP_PORT }}
 
   build-kb-dev:
     name: build-kb-dev - ${{ matrix.os }}
