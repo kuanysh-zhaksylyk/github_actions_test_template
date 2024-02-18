@@ -1,12 +1,12 @@
 import paramiko
 import os 
 
-SFTP_USER = os.environ["SFTP_USER"] 
-SFTP_PASS = os.environ["SFTP_PASS"]
-SFTP_HOST = os.environ["SFTP_HOST"]
-SFTP_PORT = os.environ["SFTP_PORT"]
+SFTP_USER = os.environ.get("sftp-user")
+if SFTP_USER is None:
+    print("Variable 'sftp-user' is not set.")
+    
+# Обработка ошибки или завершение скрипта
 
-print(SFTP_HOST)
 # def create_sftp_client(host, port, username, password):
 #     transport = paramiko.Transport((host, port))
 #     transport.connect(username=username, password=password)
