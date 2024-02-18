@@ -1,9 +1,9 @@
 name: template_workflow
 
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
   # It's callable template
-  # workflow_call:
+  workflow_call:
     # secrets:
     #   sftp-user:
     #     required: true
@@ -13,37 +13,37 @@ on:
     #     required: true
     #   sftp-port:
     #     required: true
-    # outputs:
-    #   others-var:
-    #     description: "Other steps"
-    #     value: ${{ jobs.others.outputs.output2 }}
+    outputs:
+      others-var:
+        description: "Other steps"
+        value: ${{ jobs.others.outputs.output2 }}
 
 jobs:
-  # check-changes:
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ubuntu-20.04, ubuntu-22.04]
-  #   env:
-  #     TERM: linux
-  #   # Set job outputs to values from filter step
-  #   outputs:
-  #     python: ${{ steps.filter.outputs.python }}
-  #     others: ${{ steps.filter.outputs.others }}
-  #   steps:
-  #   - name: Checkout
-  #     uses: actions/checkout@v4
+  check-changes:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    env:
+      TERM: linux
+    # Set job outputs to values from filter step
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+      others: ${{ steps.filter.outputs.others }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
         
-  #   - name: Checking changes
-  #     uses: dorny/paths-filter@v3
-  #     id: filter
-  #     with:
-  #       filters: |
-  #         python:
-  #           - '**/*'
-  #         # others:
-  #         #   - '!problem-solver/py_kpm_based/**'
+    - name: Checking changes
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          python:
+            - '**/*'
+          # others:
+          #   - '!problem-solver/py_kpm_based/**'
 
   # JOB to build only python dependecies and tests
   python:
