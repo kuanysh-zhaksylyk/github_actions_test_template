@@ -4,15 +4,15 @@ on:
   # workflow_dispatch:
   # It's callable template
   workflow_call:
-    # secrets:
-    #   sftp-user:
-    #     required: true
-    #   sftp-pass:
-    #     required: true
-    #   sftp-host:
-    #     required: true
-    #   sftp-port:
-    #     required: true
+    secrets:
+      sftp-user:
+        required: true
+      sftp-pass:
+        required: true
+      sftp-host:
+        required: true
+      sftp-port:
+        required: true
     outputs:
       others-var:
         description: "Other steps"
@@ -77,10 +77,10 @@ jobs:
           python connector.py
           ls -l
         env:
-          sftp-user: ${{ secrets.SFTP_USER }}
-          sftp-pass: ${{ secrets.SFTP_PASS }}
-          sftp-host: ${{ secrets.SFTP_HOST }}
-          sftp-port: ${{ secrets.SFTP_PORT }}
+          sftp-user: ${{ secrets.sftp-user }}
+          sftp-pass: ${{ secrets.sftp-pass }}
+          sftp-host: ${{ secrets.sftp-host }}
+          sftp-port: ${{ secrets.sftp-port }}
 
 
 
