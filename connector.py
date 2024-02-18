@@ -1,10 +1,10 @@
 import paramiko
 import os 
 
-SFTP_USER = os.environ["sftp-user"] 
-SFTP_PASS = os.environ["sftp-pass"]
-SFTP_HOST = os.environ["sftp-host"]
-SFTP_PORT = os.environ["sftp-port"]
+SFTP_USER = os.environ["SFTP_USER"] 
+SFTP_PASS = os.environ["SFTP_PASS"]
+SFTP_HOST = os.environ["SFTP_HOST"]
+SFTP_PORT = os.environ["SFTP_PORT"]
 
 print(SFTP_HOST)
 # def create_sftp_client(host, port, username, password):
