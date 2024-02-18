@@ -74,7 +74,6 @@ jobs:
           
       - name: Download ML models
         run: |
-          source /venv/bin/activate
           sudo python connector.py
           ls -l
         env:
