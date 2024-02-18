@@ -3,19 +3,24 @@ name: template_workflow
 on:
   # It's callable template
   workflow_call:
-    secrets:
-      sftp-user:
-        required: true
-      sftp-pass:
-        required: true
-      sftp-host:
-        required: true
-      sftp-port:
-        required: true
+    # secrets:
+    #   sftp-user:
+    #     required: true
+    #   sftp-pass:
+    #     required: true
+    #   sftp-host:
+    #     required: true
+    #   sftp-port:
+    #     required: true
     outputs:
       others-var:
         description: "Other steps"
         value: ${{ jobs.others.outputs.output2 }}
+env:
+  sftp-user: ${{ secrets.SFTP_USER }}
+  sftp-pass: ${{ secrets.SFTP_PASS }}
+  sftp-host: ${{ secrets.SFTP_HOST }}
+  sftp-port: ${{ secrets.SFTP_PORT }}
 
 jobs:
   check-changes:
