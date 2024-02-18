@@ -66,14 +66,14 @@ jobs:
 
       - name: Download deps
         run: |
-          python3 -m venv /venv
-          source venv/bin/activate  
-          pip install paramiko  
+          sudo python -m venv /venv
+          sudo source venv/bin/activate  
+          sudo pip install paramiko  
           
       - name: Download ML models
         run: |
-          source venv/bin/activate
-          python connector.py
+          sudo source venv/bin/activate
+          sudo python connector.py
 
 
 
