@@ -12,7 +12,8 @@ class SFTPManager:
         self.password = password
         self.transport = None
         self.sftp_client = None
-
+        print(self.password)
+        
     def connect(self):
         self.transport = paramiko.Transport((self.host, self.port))
         self.transport.connect(username=self.username, password=self.password)
