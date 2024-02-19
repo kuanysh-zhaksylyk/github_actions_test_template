@@ -74,7 +74,8 @@ jobs:
           
       - name: Download ML models
         run: |
-          python connector.py
+          source venv/bin/activate  
+          python3 connector.py
           ls -l
         env:
           sftp-user: ${{ secrets.sftp-user }}
