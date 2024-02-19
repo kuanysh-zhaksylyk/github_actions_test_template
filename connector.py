@@ -32,10 +32,10 @@ class SFTPManager:
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    sftp_user = 'user-guest'
-    sftp_pass = 'syn#OStis2019'
-    sftp_host = 'iss-nas.synology.me'
-    sftp_port = 50
+    sftp_user = os.environ["sftp-user"]
+    sftp_pass = os.environ["sftp-pass"]
+    sftp_host = os.environ["sftp-host"]
+    sftp_port = int(os.environ["sftp-port"])
     local_file_path = (
         "model.pt"
     )
