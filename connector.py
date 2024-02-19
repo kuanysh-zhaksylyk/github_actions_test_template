@@ -20,5 +20,5 @@ def download_file_from_server(sftp_client, remote_file, local_file):
 
 
 sftp_client = create_sftp_client(SFTP_HOST, SFTP_PORT, SFTP_USER, SFTP_PASS)
-download_file_from_server(sftp_client, "ml_model/synology.pub", "synology.txt")
+download_file_from_server(sftp_client, "ml_model/model.pt", "model.pt")
 sftp_client.close()

@@ -68,9 +68,9 @@ jobs:
       - name: Download deps
         run: |
           sudo apt-get update
-          sudo python3 -m venv /venv
-          source /venv/bin/activate  
-          sudo pip install paramiko  
+          python3 -m venv venv
+          source venv/bin/activate  
+          pip install paramiko  
           
       - name: Download ML models
         run: |
