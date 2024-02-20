@@ -18,7 +18,7 @@ jobs:
       sftp-host: ${{ secrets.SFTP_HOST }}
       sftp-port: ${{ secrets.SFTP_PORT }}
     with:
-      skip-tests: 'true'
+      skip-tests: ${{ github.event.inputs.skip-tests == 'true'}}
   
   build-kb-dev:
     name: build-kb-dev - ${{ matrix.os }}
