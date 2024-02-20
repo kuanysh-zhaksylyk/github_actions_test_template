@@ -3,6 +3,10 @@ name: dev
 
 on:
   workflow_dispatch:
+    inputs:
+      skip-tests:
+        required: true
+        type: boolean
 
 jobs:
   check-dev:
@@ -13,7 +17,9 @@ jobs:
       sftp-pass: ${{ secrets.SFTP_PASS }}
       sftp-host: ${{ secrets.SFTP_HOST }}
       sftp-port: ${{ secrets.SFTP_PORT }}
-
+    with:
+      skip-tests: ${{ github.event.inputs.skip-tests }}
+  
   build-kb-dev:
     name: build-kb-dev - ${{ matrix.os }}
     needs: check-dev
