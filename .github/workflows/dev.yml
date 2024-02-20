@@ -8,7 +8,7 @@ on:
 
 jobs:
   check-dev:
-    if: github.event_name == 'workflow_dispatch'
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' }} 
     uses: ./.github/workflows/template_workflow.yml
     secrets:
       sftp-user: ${{ secrets.SFTP_USER }}
