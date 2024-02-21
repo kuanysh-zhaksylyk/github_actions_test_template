@@ -1,0 +1,11 @@
+name: dev
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check-dev:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' }} 
+    uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
