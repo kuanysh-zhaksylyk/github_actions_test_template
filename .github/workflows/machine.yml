@@ -1,11 +1,16 @@
-name: sc-machine
-
+name: Calling Reusable Workflows
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-
+    inputs:
+      name:
+        description: "Input description"
+        type: string
+        default: "Ali"
+        required: false
 jobs:
-  sc-machine:
-    uses: subsystems/sc-machine/.github/workflows/sanitizers.yml
-    
+  calling-a-reusable-wf:
+    uses: github-actions-course/workflows/.github/workflows/reusable.yaml@main
+    with:
+      name: ${{ inputs.name }}
+    secrets:
+      access-token: ${{ secrets.ACCESS_TOKEN }}
