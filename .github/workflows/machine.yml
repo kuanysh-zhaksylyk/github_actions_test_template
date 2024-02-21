@@ -15,7 +15,11 @@ jobs:
     env:
       TERM: linux
     steps:
-      - uses: actions/checkout@v3 # Necessary to access local action
+      - name: checkout
+        uses: actions/checkout@v3 # Necessary to access local action
+        with:
+          submodules: recursive
+          
       - name: Local Action Call
         uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
     
