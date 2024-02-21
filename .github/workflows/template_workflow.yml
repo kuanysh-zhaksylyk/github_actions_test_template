@@ -45,9 +45,9 @@ jobs:
       with:
         filters: |
           python:
-            - '**/*'
-          # others:
-          #   - '!problem-solver/py_kpm_based/**'
+            - 'connector.py'
+          others:
+            - '!connector.py'
 
   # JOB to build only python dependecies and tests
   python:
@@ -88,74 +88,41 @@ jobs:
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
 
-
-
-      # - name: Download ML models by SFTP
-      #   run: |
-      #     sudo apt-get install lftp=4.9.2-1build1
-      #     lftp -u ${{ secrets.sftp-user }},${{ secrets.sftp-pass }} ${{ secrets.sftp-host }} -e "set sftp:auto-confirm yes; lcd ${{ env.path }} ; get ${{ secrets.sftp-path }} -o model.pt; exit"
-      #     ls folder/test -l
-      #   env:
-      #     path: "folder/test"
-        
-      # - name: Load ML models
-      #   run: |
-      #     source venv/bin/activate
-      #     curl -L -s -o ./model.pt 'https://www.dropbox.com/scl/fi/az3zjb1uhakl0awkt292m/model.pt?rlkey=1h6yodhguppchbr06mf4nsx55&dl=0'
-        
           
-  # # JOB to build others steps
-  # others:
-  #   needs: check-changes
-  #   if: ${{ needs.check-changes.outputs.others == 'true' }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: [ubuntu-20.04, ubuntu-22.04]
-  #   env:
-  #     TERM: linux
-  #   outputs:  
-  #     output2: ${{ steps.others-step.outputs.others-var }}
+  # JOB to build others steps
+  others:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.others == 'true' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    env:
+      TERM: linux
+    outputs:  
+      output2: ${{ steps.others-step.outputs.others-var }}
     
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ssh-key: ${{ secrets.ssh }}
-  #         submodules: recursive
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-  #     - name: Update
-  #       run: |
-  #         sudo apt-get update
+      - name: Update
+        run: |
+          sudo apt-get update
+      - name: Use submodule workflow
+      
+        uses: ./sc-machine/.github/workflows/sanitizers.yml
+      
+      - name: Create build-output artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: build-output - ${{ matrix.os }}
+            path: .
 
-  #     - name: Install submodules
-  #       run: |
-  #         ./scripts/install_submodules.sh
-
-  #     - name: Install problem-solver dependencies
-  #       run: |
-  #         ./scripts/install_problem_solver_deps.sh --dev
-
-  #     - name: Checking the code with clang
-  #       run: |
-  #         ./scripts/clang/check-formatting.sh
-
-  #     - name: Build problem solver
-  #       run: | 
-  #         ./scripts/build_problem_solver.sh --tests --release
-
-  #     - name: Run cpp tests
-  #       run: |
-  #         ./scripts/run_cpp_tests.sh
-
-  #     - name: Create build-output artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #           name: build-output - ${{ matrix.os }}
-  #           path: .
-
-  #     - name: Verify variables to move further
-  #       id: others-step
-  #       run: | 
-  #         echo "others-var=true" >> $GITHUB_OUTPUT
+      - name: Verify variables to move further
+        id: others-step
+        run: | 
+          echo "others-var=true" >> $GITHUB_OUTPUT
