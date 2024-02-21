@@ -112,6 +112,8 @@ jobs:
       - name: Update
         run: |
           sudo apt-get update
+          ls -l
+          
       - name: Use submodule workflow
         uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
       
