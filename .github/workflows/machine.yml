@@ -1,5 +1,6 @@
 name: Calling Reusable Workflows
 on:
+  push:
   workflow_dispatch:
     inputs:
       name:
@@ -9,4 +10,4 @@ on:
         required: false
 jobs:
   calling-a-reusable-wf:
-    uses: subsystems/reusable_workflow/.github/workflows/sanitizer.yml@main
+    uses: kuanysh-zhk/reusable_workflow/.github/workflows/sanitizer.yml@main
