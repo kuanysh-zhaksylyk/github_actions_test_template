@@ -9,4 +9,4 @@ on:
         required: false
 jobs:
   calling-a-reusable-wf:
-    uses: subsystems/reusable_workflow/.github/workflows/sanitizer.yml
+    uses: subsystems/reusable_workflow/.github/workflows/sanitizer.yml@main
