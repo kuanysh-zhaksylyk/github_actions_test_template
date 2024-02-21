@@ -6,6 +6,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-dev:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' }} 
-    uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
+  sc-machine:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    env:
+      TERM: linux
+    steps:
+      - uses: actions/checkout@v3 # Necessary to access local action
+      - name: Local Action Call
+        uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
+    
