@@ -19,7 +19,9 @@ jobs:
         uses: actions/checkout@v3 # Necessary to access local action
         with:
           submodules: recursive
-          
+      - name: ls
+        run: |
+          ls -l subsystems/sc-machine/.github/workflows/
       - name: Local Action Call
         uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
     
