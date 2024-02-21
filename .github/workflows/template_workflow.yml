@@ -51,8 +51,8 @@ jobs:
 
   # JOB to build only python dependecies and tests
   python:
-    # needs: check-changes
-    # if: ${{ needs.check-changes.outputs.python == 'true' }}
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.python == 'true' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -113,8 +113,7 @@ jobs:
         run: |
           sudo apt-get update
       - name: Use submodule workflow
-      
-        uses: ./sc-machine/.github/workflows/sanitizers.yml
+        uses: ./subsystems/sc-machine/.github/workflows/sanitizers.yml
       
       - name: Create build-output artifact
         uses: actions/upload-artifact@v4
