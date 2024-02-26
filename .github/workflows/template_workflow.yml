@@ -54,7 +54,7 @@ jobs:
   # JOB to build only python dependecies and tests
   python:
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.python == 'true' }}
+    if: ${{ needs.check-changes.outputs.python == 'false' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -94,7 +94,7 @@ jobs:
   # JOB to build others steps
   others:
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.others == 'true' }}
+    if: ${{ needs.check-changes.outputs.others == 'false' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
