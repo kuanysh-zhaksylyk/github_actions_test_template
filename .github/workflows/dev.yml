@@ -5,8 +5,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-env:
-  python-vars: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }}
 
 jobs:
   check-dev:
