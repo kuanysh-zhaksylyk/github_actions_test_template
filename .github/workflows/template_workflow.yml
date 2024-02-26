@@ -19,7 +19,7 @@ on:
         type: boolean
       environment:
         type: string
-        required: true
+        required: false
     outputs:
       others-var:
         description: "Other steps"
