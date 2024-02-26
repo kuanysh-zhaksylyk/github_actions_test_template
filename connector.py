@@ -43,7 +43,7 @@ def main():
     if not all([sftp_user, sftp_pass, sftp_host]):
         logging.error("SFTP credentials are not provided.")
         return
-    variable_content = os.environ("python_skip")
+    variable_content = os.environ["python-skip"]
     logging.info(variable_content)
     sftp_manager = SFTPManager(sftp_host, sftp_port, sftp_user, sftp_pass)
     try:
