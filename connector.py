@@ -44,7 +44,7 @@ def main():
         logging.error("SFTP credentials are not provided.")
         return
     variable_content = os.getenv("WITHOUT_PYTHON_AGENTS_TESTS")
-    logging.ingo(variable_content)
+    logging.info(variable_content)
     sftp_manager = SFTPManager(sftp_host, sftp_port, sftp_user, sftp_pass)
     try:
         sftp_manager.connect()
