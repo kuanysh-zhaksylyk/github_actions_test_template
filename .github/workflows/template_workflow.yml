@@ -55,7 +55,7 @@ jobs:
   # JOB to build only python dependecies and tests
   python:
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.python == 'false' }}
+    if: ${{ needs.check-changes.outputs.python == 'true' }}
     runs-on: ${{ matrix.os }}
     environment: ${{ inputs.environment }}
     strategy:
