@@ -5,8 +5,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-env:
-  python-vars: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }}
+# env:
+#   python-vars: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }}
 
 jobs:
   check-dev:
@@ -17,7 +17,7 @@ jobs:
       sftp-pass: ${{ secrets.SFTP_PASS }}
       sftp-host: ${{ secrets.SFTP_HOST }}
       sftp-port: ${{ secrets.SFTP_PORT }}
-        
+
   build-kb-dev:
     name: build-kb-dev - ${{ matrix.os }}
     needs: check-dev

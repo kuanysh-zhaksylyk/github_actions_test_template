@@ -21,6 +21,8 @@ on:
       others-var:
         description: "Other steps"
         value: ${{ jobs.others.outputs.output2 }}
+env:
+  python-vars: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }}
 
 jobs:
   check-changes:
@@ -87,8 +89,7 @@ jobs:
           sftp-pass: ${{ secrets.sftp-pass }}
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
-          python_var: ${{ vars.python-vars }} 
-
+          python-vars: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }}
           
   # JOB to build others steps
   others:
