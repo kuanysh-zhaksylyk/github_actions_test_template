@@ -17,12 +17,13 @@ on:
       skip-tests:
         required: false
         type: boolean
+      environment:
+        type: string
+        required: true
     outputs:
       others-var:
         description: "Other steps"
         value: ${{ jobs.others.outputs.output2 }}
-env:
-  python-vars: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }}
 
 jobs:
   check-changes:
@@ -56,6 +57,7 @@ jobs:
     needs: check-changes
     if: ${{ needs.check-changes.outputs.python == 'false' }}
     runs-on: ${{ matrix.os }}
+    environment: ${{ inputs.environment }}
     strategy:
       fail-fast: false
       matrix:
@@ -89,6 +91,7 @@ jobs:
           sftp-pass: ${{ secrets.sftp-pass }}
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
+          python-skip: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }} 
           
   # JOB to build others steps
   others:
