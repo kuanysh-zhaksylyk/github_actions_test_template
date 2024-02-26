@@ -87,7 +87,7 @@ jobs:
           sftp-pass: ${{ secrets.sftp-pass }}
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
-          WITHOUT_PYTHON_AGENTS: True
+          python_var: ${{ vars.python-vars }} 
 
           
   # JOB to build others steps
