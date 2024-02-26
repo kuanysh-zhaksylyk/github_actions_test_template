@@ -79,7 +79,7 @@ jobs:
 
       - name: Checking existence of pip cache
         run: echo "Cache exists ${{ steps.cache-pip.outputs.cache-hit }}"
-        
+
       - name: Install Python dependencies
         run: |
           ./scripts/install_python_deps.sh
@@ -114,7 +114,7 @@ jobs:
             name: build-output - ${{ matrix.os }}
             path: .
 
-      - name: Verify variables to move further
+      - name: Verify variables to move furthers
         id: others-step
         run: | 
           echo "others-var=true" >> $GITHUB_OUTPUT
