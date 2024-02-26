@@ -1,0 +1,34 @@
+name: coverage
+
+on:
+  # This workflow will be executed by cron schedule
+  schedule:
+    - cron: 0 16 * * 1,4 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  run_coverage:
+    continue-on-error: false
+    name: coverage
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        config:
+          - {
+            name: "Coverage C++",
+            os: ubuntu-latest,
+            file_memory: "Dictionary",
+            build_type: "Debug",
+            cc: "gcc",
+            cxx: "g++",
+          }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Update
+        run: |
+          sudo apt-get update
