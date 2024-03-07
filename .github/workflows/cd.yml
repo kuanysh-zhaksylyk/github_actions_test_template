@@ -1,0 +1,19 @@
+name: Dev CI/CD
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  workflow_dispatch:
+      
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check merge pull request
+      run: |
+        echo The PR was successfully merged.
+    
