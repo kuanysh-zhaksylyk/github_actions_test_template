@@ -68,11 +68,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Using ssh agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh-private-key: ${{ secrets.SFTP_SSH }}
-
+          key: ${{ secrets.SFTP_SSH }}
+          name: synology-key 
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
