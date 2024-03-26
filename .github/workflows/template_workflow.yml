@@ -71,7 +71,7 @@ jobs:
       - name: Using ssh agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.SFTP_SFTP }}
+          ssh-private-key: ${{ secrets.SFTP_SSH }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
