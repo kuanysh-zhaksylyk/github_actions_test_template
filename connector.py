@@ -59,10 +59,6 @@ def main():
         logging.info("Files in remote directory:")
         for file in files:
             logging.info(file)
-    except FileNotFoundError:
-        logging.error("File not found on remote server.")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
     finally:
         sftp_manager.close()
 
