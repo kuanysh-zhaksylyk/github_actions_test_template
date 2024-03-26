@@ -89,6 +89,7 @@ jobs:
         run: |
           chmod +x install_python_deps.sh
           ./install_python_deps.sh
+          ls -l
         env:
           sftp-user: ${{ secrets.sftp-user }}
           sftp-key: ${{ secrets.sftp-key }}
