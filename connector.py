@@ -36,7 +36,7 @@ class SFTPManager:
             return f.read()
 
 def main():
-    load_dotenv()
+    # load_dotenv()
     logging.basicConfig(level=logging.INFO)
     sftp_user = os.environ["sftp-user"]
     sftp_key = os.environ["sftp-key"]
