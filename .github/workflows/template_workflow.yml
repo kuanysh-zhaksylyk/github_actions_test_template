@@ -67,7 +67,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
+      - name: Using ssh agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SFTP_SFTP }}
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -78,7 +83,7 @@ jobs:
           sudo apt-get update
           python3 -m venv venv
           source venv/bin/activate  
-          pip install paramiko  
+          pip install paramiko python-dotenv 
           
       - name: Download ML models
         if: ${{ !inputs.skip-tests }}
