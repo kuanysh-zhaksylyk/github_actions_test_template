@@ -34,23 +34,31 @@ class SFTPManager:
     def _load_private_key(self):
         with open(self.key_path) as f:
             return f.read()
+    
+    def list_files(self, remote_dir: str):
+        if not self.sftp_client:
+            raise ValueError("SFTP client is not connected.")
+        files = self.sftp_client.listdir(remote_dir)
+        return files
 
 def main():
-    # load_dotenv()
+    load_dotenv()
     logging.basicConfig(level=logging.INFO)
     sftp_user = os.environ["sftp-user"]
     sftp_key = os.environ["sftp-key"]
     sftp_host = os.environ["sftp-host"]
     sftp_port = int(os.environ["sftp-port"])
     local_file_path = 'model.pt'
-    remote_file_path = 'ml_model/model.pt'
+    remote_file_path = 'ml_model'
 
     sftp_manager = SFTPManager(sftp_host, sftp_port, sftp_user, sftp_key)
     try:
         sftp_manager.connect()
         logging.info("Connected to SFTP server.")
-        sftp_manager.download_file(remote_file_path, local_file_path)
-        logging.info("File downloaded successfully.")
+        files = sftp_manager.list_files(remote_file_path)
+        logging.info("Files in remote directory:")
+        for file in files:
+            logging.info(file)
     except FileNotFoundError:
         logging.error("File not found on remote server.")
     except Exception as e:
