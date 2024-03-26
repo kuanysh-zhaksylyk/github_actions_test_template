@@ -15,6 +15,8 @@ on:
         required: true
       sftp-ssh:
         required: true
+      known-hosts: 
+        required: true
     inputs:
       skip-tests:
         required: false
