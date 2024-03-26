@@ -87,23 +87,25 @@ jobs:
 
       - name: Download deps
         run: |
-          sudo apt-get update
-          python3 -m venv venv
-          source venv/bin/activate  
-          pip install paramiko python-dotenv 
-          
-      - name: Download ML models
-        if: ${{ !inputs.skip-tests }}
-        run: |
-          source venv/bin/activate  
-          python3 connector.py
-          ls -l
+          install_python_deps.sh
         env:
           sftp-user: ${{ secrets.sftp-user }}
           sftp-key: ${{ secrets.sftp-key }}
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
-          python-skip: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }} 
+          
+      # - name: Download ML models
+      #   if: ${{ !inputs.skip-tests }}
+      #   run: |
+      #     source venv/bin/activate  
+      #     python3 connector.py
+      #     ls -l
+      #   env:
+      #     sftp-user: ${{ secrets.sftp-user }}
+      #     sftp-key: ${{ secrets.sftp-key }}
+      #     sftp-host: ${{ secrets.sftp-host }}
+      #     sftp-port: ${{ secrets.sftp-port }}
+      #     python-skip: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }} 
           
   # JOB to build others steps
   others:
