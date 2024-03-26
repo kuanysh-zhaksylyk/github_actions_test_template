@@ -14,6 +14,7 @@ jobs:
       sftp-key: ${{ secrets.SFTP_KEY }}
       sftp-host: ${{ secrets.SFTP_HOST }}
       sftp-port: ${{ secrets.SFTP_PORT }}
+      sftp-ssh: ${{ secrets.SSH_KEY }}
     with:
       environment: Dev
 

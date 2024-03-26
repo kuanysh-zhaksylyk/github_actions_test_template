@@ -13,6 +13,8 @@ on:
         required: true
       sftp-port:
         required: true
+      sftp-ssh:
+        required: true
     inputs:
       skip-tests:
         required: false
@@ -71,7 +73,7 @@ jobs:
       - name: webfactory/ssh-agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-private-key: ${{ secrets.sftp-ssh }}
       
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
