@@ -87,13 +87,14 @@ jobs:
 
       - name: Download deps
         run: |
-          install_python_deps.sh
+          chmod x+ install_python_deps.sh
+          ./install_python_deps.sh
         env:
           sftp-user: ${{ secrets.sftp-user }}
           sftp-key: ${{ secrets.sftp-key }}
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
-          
+
       # - name: Download ML models
       #   if: ${{ !inputs.skip-tests }}
       #   run: |
