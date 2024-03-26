@@ -7,7 +7,7 @@ on:
     secrets:
       sftp-user:
         required: true
-      sftp-pass:
+      sftp-key:
         required: true
       sftp-host:
         required: true
@@ -88,7 +88,7 @@ jobs:
           ls -l
         env:
           sftp-user: ${{ secrets.sftp-user }}
-          sftp-pass: ${{ secrets.sftp-pass }}
+          sftp-key: ${{ secrets.sftp-key }}
           sftp-host: ${{ secrets.sftp-host }}
           sftp-port: ${{ secrets.sftp-port }}
           python-skip: ${{ vars.WITHOUT_PYTHON_AGENTS_TESTS }} 
