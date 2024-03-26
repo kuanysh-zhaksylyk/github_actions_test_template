@@ -15,6 +15,7 @@ jobs:
       sftp-host: ${{ secrets.SFTP_HOST }}
       sftp-port: ${{ secrets.SFTP_PORT }}
       sftp-ssh: ${{ secrets.SSH_KEY }}
+      known-hosts: ${{ secrets.KNOWN_HOSTS }}
     with:
       environment: Dev
 

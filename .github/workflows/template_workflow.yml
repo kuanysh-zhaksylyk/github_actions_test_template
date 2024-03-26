@@ -70,10 +70,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: webfactory/ssh-agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh-private-key: ${{ secrets.sftp-ssh }}
+          key: ${{ secrets.sftp-ssh }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.known-hosts }}
+          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
       
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
