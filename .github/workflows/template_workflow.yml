@@ -87,7 +87,7 @@ jobs:
 
       - name: Download deps
         run: |
-          chmod x+ install_python_deps.sh
+          chmod +x install_python_deps.sh
           ./install_python_deps.sh
         env:
           sftp-user: ${{ secrets.sftp-user }}
