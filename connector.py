@@ -14,7 +14,7 @@ class SFTPManager:
         self.sftp_client = None
 
     def connect(self):
-        key_data = self._load_private_key()
+        key_data = self.load_private_key()
         key_file = paramiko.RSAKey.from_private_key(StringIO(key_data))
         self.transport = paramiko.Transport((self.host, self.port))
         self.transport.connect(username=self.username, pkey=key_file)
@@ -31,7 +31,7 @@ class SFTPManager:
             raise ValueError("SFTP client is not connected.")
         self.sftp_client.get(remote_file, local_file)
 
-    def _load_private_key(self):
+    def load_private_key(self):
         with open(self.key_path) as f:
             return f.read()
     
