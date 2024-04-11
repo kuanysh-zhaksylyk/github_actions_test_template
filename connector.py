@@ -1,22 +1,25 @@
 import logging
 import os
+from io import StringIO
 
 import paramiko
+from dotenv import load_dotenv
 
 
 class SFTPManager:
-    def __init__(self, host: str, port: int, username: str, password: str):
+    def __init__(self, host: str, port: int, username: str, key_path: str):
         self.host = host
         self.port = port
         self.username = username
-        self.password = password
+        self.key_path = key_path
         self.transport = None
         self.sftp_client = None
-        print(self.password)
-        
+
     def connect(self):
+        key_data = self.load_private_key()
+        key_file = paramiko.RSAKey.from_private_key(StringIO(key_data))
         self.transport = paramiko.Transport((self.host, self.port))
-        self.transport.connect(username=self.username, password=self.password)
+        self.transport.connect(username=self.username, pkey=key_file)
         self.sftp_client = paramiko.SFTPClient.from_transport(self.transport)
 
     def close(self):
@@ -30,22 +33,26 @@ class SFTPManager:
             raise ValueError("SFTP client is not connected.")
         self.sftp_client.get(remote_file, local_file)
 
+    def load_private_key(self):
+        with open(self.key_path, encoding="utf-8") as f:
+            return f.read()
+
 
 def main():
+    load_dotenv()
     logging.basicConfig(level=logging.INFO)
     sftp_user = os.environ["sftp-user"]
-    sftp_pass = os.environ["sftp-pass"]
+    sftp_key = os.environ["sftp-key"]
     sftp_host = os.environ["sftp-host"]
     sftp_port = int(os.environ["sftp-port"])
     local_file_path = (
         "model.pt"
     )
-    if not all([sftp_user, sftp_pass, sftp_host]):
+    if not all([sftp_user, sftp_key, sftp_host]):
         logging.error("SFTP credentials are not provided.")
         return
-    variable_content = os.getenv("python-skip")
-    logging.info(variable_content)
-    sftp_manager = SFTPManager(sftp_host, sftp_port, sftp_user, sftp_pass)
+
+    sftp_manager = SFTPManager(sftp_host, sftp_port, sftp_user, sftp_key)
     try:
         sftp_manager.connect()
         logging.info("Connected to SFTP server.")
@@ -53,6 +60,8 @@ def main():
         logging.info("File downloaded successfully.")
     except FileNotFoundError:
         logging.error("File not found on remote server.")
+    except paramiko.SSHException as ssh_error:
+        logging.error(f"SSH Error: {ssh_error}")
     finally:
         sftp_manager.close()
 

@@ -1,0 +1,105 @@
+name: Dev
+
+on:
+  push:
+  # It's callable template
+  workflow_dispatch:
+
+jobs:
+  check-changes:
+    continue-on-error: false
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-22.04]
+    env:
+      TERM: linux
+    # Set job outputs to values from filter step
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+      others: ${{ steps.filter.outputs.others }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+        
+    - name: Checking changes
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          python:
+            - 'connector.py'
+          others:
+            - '!connector.py'
+
+  # JOB to build only python dependecies and tests
+  python:
+    continue-on-error: false
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.python == 'true' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-22.04]
+        python-version: [3.8]
+    env:
+      TERM: linux
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: synology-key
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies and load ML model
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip3 install paramiko python-dotenv
+          python3 connector.py
+        env:
+          sftp-user: ${{ secrets.SFTP_USER }}
+          sftp-key: ${{ secrets.SFTP_KEY }}
+          sftp-host: ${{ secrets.SFTP_HOST }}
+          sftp-port: ${{ secrets.SFTP_PORT }}
+          
+  # JOB to build others steps
+  others:
+    continue-on-error: false
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.others == 'true' }}
+    name: coverage_sanitaziers
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        config:
+          - {
+            name: "Coverage C++ and Sanitizers",
+            os: ubuntu-latest,
+            file_memory: "Dictionary",
+            sanitizer: "address",
+            build_type: "Debug",
+            cc: "gcc",
+            cxx: "g++",
+          }
+    env:
+      TERM: linux
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
