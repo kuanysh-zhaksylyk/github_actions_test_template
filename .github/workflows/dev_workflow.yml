@@ -68,6 +68,7 @@ jobs:
         run: |
           python3 -m venv venv
           source venv/bin/activate
+          pip install paramiko dotenv
           python3 connector.py
         env:
           sftp-user: ${{ secrets.SFTP_USER }}
