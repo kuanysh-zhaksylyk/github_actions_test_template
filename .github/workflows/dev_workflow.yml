@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-20.04]
     env:
       TERM: linux
     # Set job outputs to values from filter step
