@@ -17,11 +17,12 @@ jobs:
         script: | 
           set -e
           pwd
-          cd ${{ secrets.WORK_DIR }}/interface/health-care-ui/
-          git status
+          ls -la
+          # cd ${{ secrets.WORK_DIR }}/interface/health-care-ui/
+          # git status
 
-          cd ${{ secrets.WORK_DIR }}
-          docker compose ps
-          docker compose logs --tail=100 ui
-          exit
+          # cd ${{ secrets.WORK_DIR }}
+          # docker compose ps
+          # docker compose logs --tail=100 ui
+          # exit
     
