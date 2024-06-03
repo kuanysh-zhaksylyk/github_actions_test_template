@@ -16,6 +16,7 @@ jobs:
         port: ${{ secrets.PORT }}
         script: | 
           set -e
+          pwd
           cd ${{ secrets.WORK_DIR }}/interface/health-care-ui/
           git status
 
