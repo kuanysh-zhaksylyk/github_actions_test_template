@@ -1,18 +1,26 @@
-name: Dev CI/CD
+name: Manual Deployment
 
 on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
   workflow_dispatch:
-      
+
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-    - name: Check merge pull request
-      run: |
-        echo The PR was successfully merged.
+    - name: Update repository and deploy containers
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: | 
+          set -e
+          cd ${{ secrets.WORK_DIR }}/interface/health-care-ui/
+          git status
+
+          cd ${{ secrets.WORK_DIR }}
+          docker compose ps
+          docker compose logs --tail=100 ui
+          exit
+    
