@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       build-services:
-        description: 'Build Project Services'
+        description: 'Build Project Services (comma-separated list of services, e.g., "python, sc-server, sc-web")'
         required: false
-        type: boolean
+        type: string
       update-platform:
         description: 'Update Platform'
         required: false
@@ -20,7 +20,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: ssh key passphrase
+    - name: Update repository and build project
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
@@ -46,10 +46,22 @@ jobs:
             ./scripts/install_submodules.sh update-platform-submodules
           fi
         
-          if [ "${{ inputs.build-services }}" = "true" ]; then
-            docker compose build
+          if [ -n "${{ inputs.build-services }}" ]; then
+            IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
+            for service in "${SERVICES[@]}"; do
+              docker compose build $service
+            done
           fi
           
+    - name: Run project containers
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |   
           docker compose run --rm problem-solver build /kb/repo.path
           docker compose up -d
           docker compose ps
