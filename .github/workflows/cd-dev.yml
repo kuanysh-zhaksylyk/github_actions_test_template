@@ -2,16 +2,21 @@ name: Dev Manual Deployment
 
 on:
   workflow_dispatch:
-    # inputs:
-    #   update-platform:
-    #     required: false
-    #     type: boolean
+    inputs:
+      update-platform:
+        description: 'Update Platform'
+        required: false
+        type: boolean
+      update-submodules:
+        description: 'Update Platform Submodules'
+        required: false
+        type: boolean
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: ssh key passphrase
+    - name: Connect to remote server and update repository
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
@@ -21,31 +26,31 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         # fingerprint: ${{ secrets.FINGERPRINT }}
         script: |
-          whoami
-          ls -al
-        #   set -e
-        #   cd ${{ secrets.WORK_DIR }}
-        #   git status
-        #   git stash
-        #   git checkout develop
-        #   git pull
-        #   git stash pop || true
-        
-        #   docker compose down
+          set -e
+          cd ${{ secrets.WORK_DIR }}
+          git status
+          git stash
+          git checkout develop
+          git pull
+          git stash pop || true        
+          docker compose down
 
-        # if: ${{ !inputs.skip-tests }}
-        # run: |
-        #   ./scripts/install_submodules.sh update-platform
-        
-        # if: ${{ !inputs.skip-tests }}
-        # run: |
-        #   ./scripts/install_submodules.sh update-platform-submodules
+    - name: Update Platform
+      if: ${{ inputs.update-platform }}
+      run: |
+         ./scripts/install_submodules.sh update-platform
+    
+    - name: Update Platform Submodules
+      if: ${{ inputs.update-submodules }}
+      run: |
+         ./scripts/install_submodules.sh update-platform-submodules
 
-
-        #   docker compose run --rm problem-solver build /kb/repo.path
-        #   docker compose up -d
-        #   docker compose ps
-        #   docker compose logs --tail=100 
-        #   exit
+    - name: Build and run containers
+      run: |
+          docker compose run --rm problem-solver build /kb/repo.path
+          docker compose up -d
+          docker compose ps
+          docker compose logs --tail=100 
+          exit
          
        
