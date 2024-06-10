@@ -64,6 +64,8 @@ jobs:
         port: ${{ secrets.PORT }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |   
+          set -e
+          cd ${{ secrets.WORK_DIR }}
           docker compose run --rm problem-solver build /kb/repo.path
           docker compose up -d
           docker compose ps
