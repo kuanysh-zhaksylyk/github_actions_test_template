@@ -3,8 +3,13 @@ name: Dev Manual Deployment
 on:
   workflow_dispatch:
     inputs:
+      build-services-enabled:
+        description: 'Build Project Services'
+        required: true
+        default: 'false'
+        type: string
       build-services:
-        description: 'Build Project Services (comma-separated list of services, e.g., "py-agents, problem-solver, sc-web")'
+        description: 'Services to build (comma-separated list, e.g., "py-agents, problem-solver, sc-web")'
         required: false
         type: string
       update-platform:
@@ -21,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Update repository and build project
+      if: ${{ github.event.inputs.build-services-enabled == 'true' }}
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
@@ -46,13 +52,12 @@ jobs:
             ./scripts/install_submodules.sh update-platform-submodules
           fi
           
+          # Сборка сервисов, если указаны
           if [ -n "${{ inputs.build-services }}" ]; then
             IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
             for service in "${SERVICES[@]}"; do
               docker compose build $service
             done
-          else
-            docker compose build
           fi
           
     - name: Run project containers
