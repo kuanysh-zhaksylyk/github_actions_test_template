@@ -46,13 +46,15 @@ jobs:
             ./scripts/install_submodules.sh update-platform-submodules
           fi
           
-          if [ "${{ inputs.build-services }}" = "all" ]; then
-            docker compose build
-          elif [ "${{ inputs.build-services }}" != "None" ]; then
-            IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
-            for service in "${SERVICES[@]}"; do
-              docker compose build $service
-            done
+          if [ -n "${{ inputs.build-services }}" ]; then
+            if [ "${{ inputs.build-services }}" = "all" ]; then
+              docker compose build
+            else
+              IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
+              for service in "${SERVICES[@]}"; do
+                docker compose build $service
+              done
+            fi
           fi
           
     - name: Run project containers
