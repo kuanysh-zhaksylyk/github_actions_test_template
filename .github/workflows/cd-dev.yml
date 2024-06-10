@@ -46,7 +46,9 @@ jobs:
             ./scripts/install_submodules.sh update-platform-submodules
           fi
         
-          if [ -n "${{ inputs.build-services }}" ]; then
+          if [ -z "${{ inputs.build-services }}" ]; then
+            docker compose build
+          else
             IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
             for service in "${SERVICES[@]}"; do
               docker compose build $service
