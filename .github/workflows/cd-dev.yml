@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       build-services:
-        description: 'Build Project Services (comma-separated list of services, e.g., "python, sc-server, sc-web")'
+        description: 'Build Project Services (comma-separated list of services, e.g., "py-agents, problem-solver, sc-web")'
         required: false
         type: string
       update-platform:
@@ -46,13 +46,15 @@ jobs:
             ./scripts/install_submodules.sh update-platform-submodules
           fi
         
-          if [ -z "${{ inputs.build-services }}" ]; then
-            docker compose build
-          else
-            IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
-            for service in "${SERVICES[@]}"; do
-              docker compose build $service
-            done
+          if [ "${{ inputs.build-service }}" = "true" ]; then
+            if [ -z "${{ inputs.build-services }}" ]; then
+              docker compose build
+            else
+              IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
+              for service in "${SERVICES[@]}"; do
+                docker compose build $service
+              done
+            fi
           fi
           
     - name: Run project containers
@@ -69,7 +71,7 @@ jobs:
           docker compose run --rm problem-solver build /kb/repo.path
           docker compose up -d
           docker compose ps
-          docker compose logs --tail=100 
+          docker compose logs problem-solver --tail=100 
           exit
          
        
