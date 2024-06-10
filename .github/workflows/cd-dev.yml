@@ -45,16 +45,14 @@ jobs:
           if [ "${{ inputs.update-submodules }}" = "true" ]; then
             ./scripts/install_submodules.sh update-platform-submodules
           fi
-        
-          if [ "${{ inputs.build-service }}" = "true" ]; then
-            if [ -z "${{ inputs.build-services }}" ]; then
-              docker compose build
-            else
-              IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
-              for service in "${SERVICES[@]}"; do
-                docker compose build $service
-              done
-            fi
+          
+          if [ -n "${{ inputs.build-services }}" ]; then
+            IFS=',' read -ra SERVICES <<< "${{ inputs.build-services }}"
+            for service in "${SERVICES[@]}"; do
+              docker compose build $service
+            done
+          else
+            docker compose build
           fi
           
     - name: Run project containers
@@ -73,5 +71,3 @@ jobs:
           docker compose ps
           docker compose logs problem-solver --tail=100 
           exit
-         
-       
